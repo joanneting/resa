@@ -36,7 +36,9 @@ def main():
     runner = Runner(cfg)
 
     if args.validate:
+
         val_loader = build_dataloader(cfg.dataset.val, cfg, is_train=False)
+        print(f'val_loader : {val_loader}')
         runner.validate(val_loader)
     else:
         runner.train()
@@ -45,7 +47,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Train a detector')
     parser.add_argument('config', help='train config file path')
     parser.add_argument(
-        '--work_dirs', type=str, default='work_dirs',
+        '--work_dirs', type=str, default='C:\\Users\\JoanneLin\\Desktop\\data',
         help='work dirs')
     parser.add_argument(
         '--load_from', default=None,

@@ -20,3 +20,7 @@ tmp.*
 *.pt
 *.pth
 *.un~
+
+.idea/
+
+runner/evaluator/culane/lane_evaluation/build-vs2015/

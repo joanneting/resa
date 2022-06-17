@@ -1,5 +1,6 @@
 # Copyright (c) Open-MMLab. All rights reserved.
 import ast
+import os
 import os.path as osp
 import shutil
 import sys
@@ -94,29 +95,61 @@ class Config:
 
     @staticmethod
     def _file2dict(filename):
+
         filename = osp.abspath(osp.expanduser(filename))
         check_file_exist(filename)
         if filename.endswith('.py'):
-            with tempfile.TemporaryDirectory() as temp_config_dir:
-                temp_config_file = tempfile.NamedTemporaryFile(
-                    dir=temp_config_dir, suffix='.py')
-                temp_config_name = osp.basename(temp_config_file.name)
-                shutil.copyfile(filename,
-                                osp.join(temp_config_dir, temp_config_name))
-                temp_module_name = osp.splitext(temp_config_name)[0]
-                sys.path.insert(0, temp_config_dir)
-                Config._validate_py_syntax(filename)
-                mod = import_module(temp_module_name)
-                sys.path.pop(0)
-                cfg_dict = {
-                    name: value
-                    for name, value in mod.__dict__.items()
-                    if not name.startswith('__')
-                }
-                # delete imported module
-                del sys.modules[temp_module_name]
-                # close temp file
-                temp_config_file.close()
+            try:
+                with tempfile.TemporaryDirectory() as temp_config_dir:
+
+                    temp_config_file = tempfile.NamedTemporaryFile(
+                        dir=temp_config_dir, suffix='.py',delete = False)
+                    temp_config_name = osp.basename(temp_config_file.name)
+
+                    shutil.copyfile(filename,
+                                    osp.join(temp_config_dir, temp_config_name))
+
+                    temp_module_name = osp.splitext(temp_config_name)[0]
+                    sys.path.insert(0, temp_config_dir)
+
+                    # Config._validate_py_syntax(filename)
+
+                    mod = import_module(temp_module_name)
+                    sys.path.pop(0)
+                    cfg_dict = {
+                        name: value
+                        for name, value in mod.__dict__.items()
+                        if not name.startswith('__')
+                    }
+
+                    # delete imported module
+                    del sys.modules[temp_module_name]
+                    # close temp file
+                    temp_config_file.close()
+                    os.remove(osp.join(temp_config_dir, temp_config_name))
+
+                    # temp_config_dir.cleanup()
+            except PermissionError:
+                # temp_config_dir = "C:\\Users\\JoanneLin\\AppData\\Local\\Temp\\"
+                # temp_config_file_path = temp_config_dir +"temp.py"
+                # temp_config_file = open("C:\\Users\\JoanneLin\\AppData\\Local\\Temp\\temp.py", "a")
+                # temp_config_file.close()
+                # shutil.copyfile(filename, temp_config_file_path)
+                # temp_module_name = "temp"
+                # sys.path.insert(0, temp_config_dir)
+                # Config._validate_py_syntax(filename)
+                # mod = import_module(temp_module_name)
+                # sys.path.pop(0)
+                # cfg_dict = {
+                #     name: value
+                #     for name, value in mod.__dict__.items()
+                #     if not name.startswith('__')
+                # }
+                # # delete imported module
+                # del sys.modules[temp_module_name]
+                #
+                # os.remove(temp_config_file_path)
+                pass
         elif filename.endswith(('.yml', '.yaml', '.json')):
             import mmcv
             cfg_dict = mmcv.load(filename)

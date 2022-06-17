@@ -16,7 +16,7 @@ def check():
     import sys
     FNULL = open(os.devnull, 'w')
     result = subprocess.call(
-        './runner/evaluator/culane/lane_evaluation/evaluate', stdout=FNULL, stderr=FNULL)
+        './runner/evaluator/culane/lane_evaluation/evaluate.exe', stdout=FNULL, stderr=FNULL)
     if result > 1:
         print('There is something wrong with evaluate tool, please compile it.')
         sys.exit()
@@ -90,7 +90,7 @@ class CULane(nn.Module):
         super(CULane, self).__init__()
         # Firstly, check the evaluation tool
         check()
-        self.cfg = cfg 
+        self.cfg = cfg
         self.blur = torch.nn.Conv2d(
             5, 5, 9, padding=4, bias=False, groups=5).cuda()
         torch.nn.init.constant_(self.blur.weight, 1 / 81)

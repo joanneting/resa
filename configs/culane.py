@@ -61,7 +61,7 @@ img_height = 288
 img_width = 800
 cut_height = 240 
 
-dataset_path = './data/CULane'
+dataset_path = 'C:\\Users\\JoanneLin\\Desktop\\data\\CULane'
 dataset = dict(
     train=dict(
         type='CULane',
@@ -81,7 +81,7 @@ dataset = dict(
 )
 
 
-workers = 12
+workers = 0
 num_classes = 4 + 1
 ignore_label = 255
 log_interval = 500

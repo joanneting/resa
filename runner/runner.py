@@ -89,18 +89,20 @@ class Runner(object):
     def validate(self, val_loader):
         self.net.eval()
         for i, data in enumerate(tqdm(val_loader, desc=f'Validate')):
+
             data = self.to_cuda(data)
             with torch.no_grad():
                 output = self.net(data['img'])
-                self.evaluator.evaluate(val_loader.dataset, output, data)
+                break;
+                # self.evaluator.evaluate(val_loader.dataset, output, data)
 
-        metric = self.evaluator.summarize()
-        if not metric:
-            return
-        if metric > self.metric:
-            self.metric = metric
-            self.save_ckpt(is_best=True)
-        self.recorder.logger.info('Best metric: ' + str(self.metric))
+        # metric = self.evaluator.summarize()
+        # if not metric:
+        #     return
+        # if metric > self.metric:
+        #     self.metric = metric
+        #     self.save_ckpt(is_best=True)
+        # self.recorder.logger.info('Best metric: ' + str(self.metric))
 
     def save_ckpt(self, is_best=False):
         save_model(self.net, self.optimizer, self.scheduler,
